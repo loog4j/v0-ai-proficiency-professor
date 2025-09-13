@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jimmy AI - The AI Proficiency Professor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 50%, #f3e8ff 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .logo-text p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Navigation */
+        .nav {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .nav-content {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 0;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: transparent;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .nav-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .nav-btn:hover:not(.active) {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .chat-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f9fafb;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.jimmy .message-avatar {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: #10b981;
+            color: white;
+        }
+
+        .message-content {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            max-width: 70%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background: #2563eb;
+            color: white;
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .chat-input-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .send-btn {
+            padding: 0.75rem 1.5rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .send-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .proficiency-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .proficiency-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .progress-bar {
+            background: #f3f4f6;
+            border-radius: 0.5rem;
+            height: 0.5rem;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            border-radius: 0.5rem;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-align: right;
+        }
+
+        /* Assessment Results */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .result-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-transform: capitalize;
+        }
+
+        .recommendations {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .recommendations h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .recommendation-item {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid #2563eb;
+        }
+
+        .recommendation-item h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #1f2937;
+        }
+
+        .recommendation-item p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .nav-content {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .chat-container {
+                margin: 0 1rem;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🧠</div>
+                    <div class="logo-text">
+                        <h1>Jimmy AI</h1>
+                        <p>The AI Proficiency Professor</p>
+                    </div>
+                </div>
+                <div class="badge">AI Learning Assistant</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-content">
+                <button class="nav-btn active" onclick="switchView('chat')">
+                    💬 Chat with Jimmy
+                </button>
+                <button class="nav-btn" onclick="switchView('dashboard')">
+                    📊 Proficiency Dashboard
+                </button>
+                <button class="nav-btn" onclick="switchView('results')">
+                    🎯 Assessment Results
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Chat View -->
+            <div id="chat-view" class="view active">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h2>Chat with Jimmy AI</h2>
+                        <p>Let's assess and improve your AI proficiency together!</p>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message jimmy">
+                            <div class="message-avatar">J</div>
+                            <div class="message-content">
+                                Hello! I'm Jimmy AI, your AI Proficiency Professor. I'm here to help you understand and improve your skills with artificial intelligence. Let's start with a simple question: What do you think artificial intelligence is, and how do you currently use it in your daily life?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <form class="chat-input-form" onsubmit="sendMessage(event)">
+                            <input 
+                                type="text" 
+                                class="chat-input" 
+                                id="message-input" 
+                                placeholder="Type your response here..."
+                                required
+                            >
+                            <button type="submit" class="send-btn" id="send-btn">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view">
+                <div class="dashboard">
+                    <div class="proficiency-card">
+                        <h3>Overall Proficiency</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="overall-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="overall-text">0%</div>
+                    </div>
+                    <div class="proficiency-card">
+                        <h3>Prompt Engineering</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="prompt-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="prompt-text">0%</div>
+                    </div>
+                    <div class="proficiency-card">
+                        <h3>AI Understanding</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="understanding-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="understanding-text">0%</div>
+                    </div>
+                    <div class="proficiency-card">
+                        <h3>Ethical AI</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="ethical-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="ethical-text">0%</div>
+                    </div>
+                    <div class="proficiency-card">
+                        <h3>Practical Application</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="practical-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="practical-text">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results View -->
+            <div id="results-view" class="view">
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="result-score" id="overall-score">0</div>
+                        <div class="result-label">Overall Score</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-score" id="prompt-score">0</div>
+                        <div class="result-label">Prompt Engineering</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-score" id="understanding-score">0</div>
+                        <div class="result-label">AI Understanding</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-score" id="ethical-score">0</div>
+                        <div class="result-label">Ethical AI</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-score" id="practical-score">0</div>
+                        <div class="result-label">Practical Application</div>
+                    </div>
+                </div>
+                
+                <div class="recommendations">
+                    <h3>Personalized Learning Recommendations</h3>
+                    <div id="recommendations-list">
+                        <div class="recommendation-item">
+                            <h4>Start Chatting with Jimmy</h4>
+                            <p>Begin your AI proficiency journey by having a conversation with Jimmy AI to get your initial assessment.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global state
+        let userProficiency = {
+            overall: 0,
+            promptEngineering: 0,
+            aiUnderstanding: 0,
+            ethicalAI: 0,
+            practicalApplication: 0
+        };
+        let messageCount = 0;
+
+        // Assessment patterns and logic
+        const assessmentQuestions = [
+            {
+                pattern: /what.*ai|define.*ai|artificial intelligence/i,
+                category: "aiUnderstanding",
+                responses: {
+                    basic: { score: 5, feedback: "Good start! Try to be more specific about AI capabilities." },
+                    intermediate: { score: 10, feedback: "Nice understanding! Consider mentioning different types of AI." },
+                    advanced: { score: 15, feedback: "Excellent grasp of AI fundamentals!" }
+                }
+            },
+            {
+                pattern: /prompt|instruction|ask.*ai|tell.*ai/i,
+                category: "promptEngineering",
+                responses: {
+                    basic: { score: 5, feedback: "You're thinking about prompts! Try to be more specific and detailed." },
+                    intermediate: { score: 10, feedback: "Good prompt awareness! Consider adding context and examples." },
+                    advanced: { score: 15, feedback: "Great prompt engineering mindset!" }
+                }
+            },
+            {
+                pattern: /bias|ethical|responsible|fair|privacy|harm/i,
+                category: "ethicalAI",
+                responses: {
+                    basic: { score: 5, feedback: "Important ethical consideration! Explore this topic further." },
+                    intermediate: { score: 10, feedback: "Good ethical awareness! Think about specific scenarios." },
+                    advanced: { score: 15, feedback: "Excellent ethical AI thinking!" }
+                }
+            },
+            {
+                pattern: /use.*ai|apply|tool|solve|problem|work|business/i,
+                category: "practicalApplication",
+                responses: {
+                    basic: { score: 5, feedback: "Good practical thinking! Be more specific about applications." },
+                    intermediate: { score: 10, feedback: "Nice application ideas! Consider implementation challenges." },
+                    advanced: { score: 15, feedback: "Excellent practical AI application!" }
+                }
+            }
+        ];
+
+        // Navigation
+        function switchView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected view
+            document.getElementById(viewName + '-view').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Update dashboard and results when switching to those views
+            if (viewName === 'dashboard') {
+                updateDashboard();
+            } else if (viewName === 'results') {
+                updateResults();
+            }
+        }
+
+        // Assessment logic
+        function assessUserResponse(response) {
+            const responseLength = response.length;
+            const wordCount = response.split(" ").length;
+
+            // Find matching assessment pattern
+            for (const question of assessmentQuestions) {
+                if (question.pattern.test(response)) {
+                    let level = "basic";
+
+                    // Determine response quality
+                    if (wordCount > 30 && responseLength > 150) {
+                        level = "advanced";
+                    } else if (wordCount > 15 && responseLength > 75) {
+                        level = "intermediate";
+                    }
+
+                    // Bonus for technical terms or examples
+                    const technicalTerms = /machine learning|neural network|algorithm|model|training|data|nlp|computer vision|deep learning/i;
+                    const examples = /example|instance|such as|like|for example/i;
+
+                    if (technicalTerms.test(response) || examples.test(response)) {
+                        level = level === "basic" ? "intermediate" : "advanced";
+                    }
+
+                    const assessment = question.responses[level];
+                    return {
+                        category: question.category,
+                        score: assessment.score,
+                        feedback: assessment.feedback
+                    };
+                }
+            }
+
+            // Default assessment
+            if (wordCount > 10) {
+                return {
+                    category: "aiUnderstanding",
+                    score: 3,
+                    feedback: "Thanks for sharing! Try to be more specific about AI concepts."
+                };
+            }
+
+            return null;
+        }
+
+        function generateJimmyResponse(userInput, assessment) {
+            const responses = [
+                // Introduction and basic questions
+                [
+                    "That's a great start! I can see you have some understanding of AI. Let me ask you this: Can you describe a specific situation where you think AI might be helpful in your daily life?",
+                    "Interesting perspective! Now, let's dive deeper. What do you think are some limitations or challenges that AI systems face today?",
+                    "I appreciate your thoughtful response. Here's a scenario for you: If you were to use AI to help write an email, how would you structure your request to get the best result?"
+                ],
+                // Intermediate questions
+                [
+                    "Excellent thinking! Let's explore prompt engineering. Can you give me an example of how you would ask an AI to help you solve a specific problem you're facing?",
+                    "Great insight! Now, considering AI ethics: What concerns might arise when AI systems are used to make important decisions about people's lives?",
+                    "That shows good understanding! Let's talk about practical applications. Can you think of three different ways AI could be used in education?"
+                ],
+                // Advanced questions
+                [
+                    "Impressive knowledge! Here's a challenge: How would you explain the difference between narrow AI and general AI to someone who's never heard these terms?",
+                    "Excellent analysis! Let's discuss bias in AI. Can you describe how bias might creep into an AI system and suggest ways to mitigate it?",
+                    "Outstanding! Now for a practical scenario: You're tasked with implementing an AI solution for a small business. Walk me through your approach."
+                ]
+            ];
+
+            // Determine response level
+            let responseLevel = 0;
+            if (messageCount > 6) responseLevel = 2;
+            else if (messageCount > 3) responseLevel = 1;
+
+            let baseResponse = responses[responseLevel][messageCount % responses[responseLevel].length];
+
+            if (assessment) {
+                const encouragement = [
+                    "I can see you're developing strong skills in " + assessment.category.replace(/([A-Z])/g, " $1").toLowerCase() + ". ",
+                    "Your understanding of " + assessment.category.replace(/([A-Z])/g, " $1").toLowerCase() + " is improving! ",
+                    "Great progress in " + assessment.category.replace(/([A-Z])/g, " $1").toLowerCase() + "! "
+                ];
+
+                baseResponse = encouragement[Math.floor(Math.random() * encouragement.length)] + baseResponse;
+            }
+
+            // Add tips occasionally
+            if (messageCount % 4 === 0) {
+                const tips = [
+                    "\n\n💡 Tip: When working with AI, always be specific about what you want and provide context for better results.",
+                    "\n\n💡 Tip: Remember that AI systems learn from data, so they can reflect biases present in that data.",
+                    "\n\n💡 Tip: The key to good prompting is being clear, specific, and providing examples when possible."
+                ];
+                baseResponse += tips[Math.floor(Math.random() * tips.length)];
+            }
+
+            return baseResponse;
+        }
+
+        // Chat functionality
+        function sendMessage(event) {
+            event.preventDefault();
+            
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            
+            // Clear input
+            input.value = '';
+            
+            // Disable send button temporarily
+            const sendBtn = document.getElementById('send-btn');
+            sendBtn.disabled = true;
+            
+            // Process response after a short delay
+            setTimeout(() => {
+                messageCount++;
+                
+                // Assess user response
+                const assessment = assessUserResponse(message);
+                
+                // Update proficiency scores
+                if (assessment) {
+                    userProficiency[assessment.category] = Math.min(100, userProficiency[assessment.category] + assessment.score);
+                    
+                    // Update overall score
+                    const categories = ['promptEngineering', 'aiUnderstanding', 'ethicalAI', 'practicalApplication'];
+                    const total = categories.reduce((sum, cat) => sum + userProficiency[cat], 0);
+                    userProficiency.overall = Math.round(total / categories.length);
+                }
+                
+                // Generate Jimmy's response
+                const jimmyResponse = generateJimmyResponse(message, assessment);
+                
+                // Add Jimmy's response to chat
+                addMessage(jimmyResponse, 'jimmy');
+                
+                // Re-enable send button
+                sendBtn.disabled = false;
+                
+                // Focus input
+                input.focus();
+            }, 1000);
+        }
+
+        function addMessage(content, sender) {
+            const messagesContainer = document.getElementById('chat-messages');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = sender === 'jimmy' ? 'J' : 'U';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.textContent = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Dashboard updates
+        function updateDashboard() {
+            const categories = [
+                { key: 'overall', id: 'overall' },
+                { key: 'promptEngineering', id: 'prompt' },
+                { key: 'aiUnderstanding', id: 'understanding' },
+                { key: 'ethicalAI', id: 'ethical' },
+                { key: 'practicalApplication', id: 'practical' }
+            ];
+
+            categories.forEach(cat => {
+                const progress = document.getElementById(cat.id + '-progress');
+                const text = document.getElementById(cat.id + '-text');
+                const value = userProficiency[cat.key];
+                
+                progress.style.width = value + '%';
+                text.textContent = value + '%';
+            });
+        }
+
+        // Results updates
+        function updateResults() {
+            const categories = [
+                { key: 'overall', id: 'overall' },
+                { key: 'promptEngineering', id: 'prompt' },
+                { key: 'aiUnderstanding', id: 'understanding' },
+                { key: 'ethicalAI', id: 'ethical' },
+                { key: 'practicalApplication', id: 'practical' }
+            ];
+
+            categories.forEach(cat => {
+                const scoreElement = document.getElementById(cat.id + '-score');
+                scoreElement.textContent = userProficiency[cat.key];
+            });
+
+            // Update recommendations
+            updateRecommendations();
+        }
+
+        function updateRecommendations() {
+            const recommendationsList = document.getElementById('recommendations-list');
+            
+            if (userProficiency.overall === 0) {
+                return; // Keep default recommendation
+            }
+            
+            const recommendations = [];
+            
+            // Generate recommendations based on lowest scores
+            const categories = [
+                { key: 'promptEngineering', name: 'Prompt Engineering', tips: [
+                    'Practice writing clear, specific prompts with context and examples',
+                    'Learn about prompt templates and structured approaches',
+                    'Experiment with different prompt styles for various tasks'
+                ]},
+                { key: 'aiUnderstanding', name: 'AI Understanding', tips: [
+                    'Study the fundamentals of machine learning and neural networks',
+                    'Learn about different types of AI: narrow vs general, supervised vs unsupervised',
+                    'Explore how AI models are trained and deployed'
+                ]},
+                { key: 'ethicalAI', name: 'Ethical AI', tips: [
+                    'Learn about AI bias and fairness in algorithmic decision-making',
+                    'Study privacy concerns and data protection in AI systems',
+                    'Understand the societal impact of AI automation'
+                ]},
+                { key: 'practicalApplication', name: 'Practical Application', tips: [
+                    'Identify specific use cases for AI in your field or interests',
+                    'Practice implementing AI solutions for real-world problems',
+                    'Learn about AI tools and platforms available for different industries'
+                ]}
+            ];
+            
+            // Find areas that need improvement (score < 50)
+            const areasToImprove = categories.filter(cat => userProficiency[cat.key] < 50);
+            
+            if (areasToImprove.length === 0) {
+                recommendations.push({
+                    title: 'Excellent Progress!',
+                    description: 'You\'re doing great across all areas. Continue practicing and exploring advanced AI concepts.'
+                });
+            } else {
+                areasToImprove.forEach(area => {
+                    const randomTip = area.tips[Math.floor(Math.random() * area.tips.length)];
+                    recommendations.push({
+                        title: `Improve ${area.name}`,
+                        description: randomTip
+                    });
+                });
+            }
+            
+            // Clear and update recommendations
+            recommendationsList.innerHTML = '';
+            recommendations.forEach(rec => {
+                const item = document.createElement('div');
+                item.className = 'recommendation-item';
+                item.innerHTML = `
+                    <h4>${rec.title}</h4>
+                    <p>${rec.description}</p>
+                `;
+                recommendationsList.appendChild(item);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('message-input').focus();
+        });
+    </script>
+</body>
+</html>
